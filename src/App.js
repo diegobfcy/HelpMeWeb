@@ -9,7 +9,7 @@ const mapContainerStyle = {
   height: '98vh',
 };
 
-const center = {
+const defaultCenter = {
   lat: -16.406884,
   lng: -71.537302,
 };
@@ -45,45 +45,33 @@ function Map() {
     return () => clearInterval(intervalId);
   }, []);
 
-  if (!location) {
-    return <div>Esperando ubicación...</div>;
-  }
-
-  const mapCenter = {
-    lat: location.latitude,
-    lng: location.longitude,
-  };
-
-  // Verifica si las coordenadas son 0.0
-  const isZeroCoordinates = location.latitude === 0.0 && location.longitude === 0.0;
-
-  if (isZeroCoordinates) {
-    return (
-      <div>
-        <div>HOLA MUNDO</div>
-        <div>Las coordenadas son 0.0, no se puede mostrar el mapa correctamente.</div>
-      </div>
-    );
-  }
-
+  // Muestra el mapa siempre
   return (
     <div>
-      <div>HOLA MUNDO</div>
+      <div></div>
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
         <div>
-          <GoogleMap mapContainerStyle={mapContainerStyle} center={mapCenter} zoom={850}>
-            <Marker position={mapCenter} />
-            <Circle
-              center={mapCenter}
-              radius={200} // Establece el radio del círculo en metros (ajusta según tus necesidades)
-              options={{
-                fillColor: '#FF0000', // Color de relleno del círculo
-                fillOpacity: 0.3, // Opacidad del relleno
-                strokeColor: '#FF0000', // Color del borde
-                strokeOpacity: 1, // Opacidad del borde
-                strokeWeight: 1, // Ancho del borde
-              }}
-            />
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            center={location ? { lat: location.latitude, lng: location.longitude } : defaultCenter}
+            zoom={location ? 15 : 10} // Ajusta el zoom según tus necesidades
+          >
+            {location && (
+              <>
+                <Marker position={{ lat: location.latitude, lng: location.longitude }} />
+                <Circle
+                  center={{ lat: location.latitude, lng: location.longitude }}
+                  radius={200} // Establece el radio del círculo en metros (ajusta según tus necesidades)
+                  options={{
+                    fillColor: '#FF0000', // Color de relleno del círculo
+                    fillOpacity: 0.3, // Opacidad del relleno
+                    strokeColor: '#FF0000', // Color del borde
+                    strokeOpacity: 1, // Opacidad del borde
+                    strokeWeight: 1, // Ancho del borde
+                  }}
+                />
+              </>
+            )}
           </GoogleMap>
         </div>
       </LoadScript>
